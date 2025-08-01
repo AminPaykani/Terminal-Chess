@@ -9,7 +9,27 @@ with open('black_board.json', 'r' , encoding='utf8') as file:
     black_data = json.load(file)
 
 move_counter = 0
+move_history = []
+total_moves_possible = []
 square_to_num = {'a': 1 , 'b' : 2 , 'c' : 3 , 'd' : 4 , 'e' : 5 , 'f' : 6 , 'g' : 7 , 'h' : 8}
+
+
+# To be implemented...
+def castle_possib():
+    """If castling is possible or not"""
+    pass
+
+def moves_possible(number):
+    """
+    Input : total moves possible
+    Output : what happnes
+    """
+    if number == 0:
+        return "Impossible move!"
+    elif number == 1:
+        return "Move was made succesfully"
+    else:
+        return "This feutue is not implemented yet please return later!"
 
 def legal(pieace , first_square , second_square):
     """This function's job is too return true/false if the move is legal or not"""
@@ -36,7 +56,9 @@ def legal(pieace , first_square , second_square):
         if (base_square_word == dest_square_word) or (base_square_num == dest_square_num):
             return True
     elif pieace =='p':
-        if (abs(base_square_num - dest_square_num) == 1) and (base_square_word == dest_square_word):
+        if (base_square_num - dest_square_num == -1) and (base_square_word == dest_square_word) and (move_counter % 2 == 0):
+            return True
+        elif (base_square_num - dest_square_num == 1) and (base_square_word == dest_square_word) and (move_counter % 2 == 1):
             return True
     else:
         return False
@@ -44,25 +66,44 @@ def legal(pieace , first_square , second_square):
 
 while True:
     move = input().lower().split(" ")
-    if move_counter % 2 == 0:
+    if move_counter % 2 == 0: 
+        # white to move
         for square in white_data:
+            # iteration over the white data
             if white_data[square] == move[0]:
+                # if a square had the wanted pieace
                 if legal(move[0] , square , move[1]):
+                    # if the pieace is able to do such a move
+                    move_history.append(move)
                     white_data[move[1]] = move[0]
                     white_data[square] = ""
-                    print(white_data)
                     move_counter += 1
+                    total_moves_possible.append(1)
                     break
-                else:
-                    print("illegal move!")
+                total_moves_possible.append(0)
             else:
                 continue
+        print(moves_possible(sum(total_moves_possible)))
+        total_moves_possible.clear()
+        print(white_data)
+
     else:
+        # black to move
         for square in black_data:
+            # iteration over the black data
             if black_data[square] == move[0]:
-                black_data[move[1]] = move[0]
-                black_data[square] = ""
-                break
+                # if a square had the wanted pieace
+                if legal(move[0] , square , move[1]):
+                    # if the pieace is able to do such a move
+                    move_history.append(move)
+                    black_data[move[1]] = move[0]
+                    black_data[square] = ""
+                    move_counter += 1
+                    total_moves_possible.append(1)
+                    break
+                total_moves_possible.append(0)
             else:
-                pass
-        move_counter += 1
+                continue
+        print(moves_possible(sum(total_moves_possible)))
+        total_moves_possible.clear()
+        print(black_data)
